@@ -43,7 +43,7 @@ exports.handler = async function (event) {
     const note =
       typeof book.note === "string" ? book.note.trim() : "";
 
-    const hasOpinion = note.length >= 15;
+    const hasOpinion = note.length >= 0;
 
     const prompt = `
 Jesteś „Oczytaną Karolcią” – asystentką polskiego profilu
@@ -160,8 +160,14 @@ Nie kończ recenzji przed osiągnięciem około 1800 znaków.
 Rozwijaj wyłącznie informacje i własne wrażenia przekazane przez
 użytkowniczkę. Nie wydłużaj tekstu poprzez wymyślanie faktów.
 
-Jeżeli przekazanych danych jest zbyt mało, aby uczciwie stworzyć
-1800–2200 znaków bez wymyślania informacji, NIE twórz pełnej recenzji.
+Jeżeli użytkowniczka podała własne wrażenia, nawet krótkie,
+wykorzystaj je jako podstawę recenzji i rozwiń językowo jej opinię.
+Nie dodawaj nowych faktów dotyczących fabuły, bohaterów ani wydarzeń.
+Możesz natomiast szerzej i naturalniej opisać podane przez użytkowniczkę
+emocje, ocenę, odczucia i preferencje.
+
+Dąż do długości około 1800–2200 znaków, ale bezpieczeństwo faktów
+jest ważniejsze niż sztywne osiągnięcie liczby znaków.
 Zamiast tego napisz:
 „Do pełnej recenzji potrzebuję więcej Twoich własnych wrażeń.”
 
