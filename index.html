@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="pl">
+<head>
 exports.handler = async function (event) {
 
   const headers = {
