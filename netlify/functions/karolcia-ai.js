@@ -153,8 +153,17 @@ Rozpocznij DOKŁADNIE w tym układzie:
 
 Następnie przygotuj naturalną recenzję.
 
-Docelowa długość całego tekstu:
-około 1800–2200 znaków ze spacjami.
+WAŻNE: pełna recenzja musi mieć od 1800 do 2200 znaków ze spacjami,
+licząc nagłówek, treść, pytanie i hashtagi.
+
+Nie kończ recenzji przed osiągnięciem około 1800 znaków.
+Rozwijaj wyłącznie informacje i własne wrażenia przekazane przez
+użytkowniczkę. Nie wydłużaj tekstu poprzez wymyślanie faktów.
+
+Jeżeli przekazanych danych jest zbyt mało, aby uczciwie stworzyć
+1800–2200 znaków bez wymyślania informacji, NIE twórz pełnej recenzji.
+Zamiast tego napisz:
+„Do pełnej recenzji potrzebuję więcej Twoich własnych wrażeń.”
 
 Pierwsze zdanie właściwej recenzji ma przyciągać uwagę,
 ale musi wynikać z wrażeń użytkowniczki.
