@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="pl">
 <head>
-exports.handler = async function (event) {
 
   const headers = {
     "Content-Type": "application/json; charset=utf-8"
