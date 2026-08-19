@@ -1,220 +1,2096 @@
 <!doctype html>
 <html lang="pl">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#26352d">
+<title>Oczytana Karolcia — Bookstagram Studio</title>
 
-  const headers = {
-    "Content-Type": "application/json; charset=utf-8"
+<style>
+:root{
+  --bg:#f7f4ef;
+  --panel:#ffffff;
+  --sidebar:#26352d;
+  --sidebar2:#34483c;
+  --green:#526b59;
+  --green-light:#e9f0ea;
+  --cream:#f3eadf;
+  --caramel:#bd8259;
+  --brown:#60483b;
+  --text:#342e2a;
+  --muted:#8b817a;
+  --line:#e8e1d9;
+  --red:#b85e58;
+  --shadow:0 8px 28px rgba(70,55,45,.07);
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{cursor:pointer}
+
+.layout{
+  display:grid;
+  grid-template-columns:245px 1fr;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  position:fixed;
+  inset:0 auto 0 0;
+  width:245px;
+  overflow:auto;
+  padding:24px 15px;
+  color:#fff;
+  background:linear-gradient(180deg,var(--sidebar),#1e2923);
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin:0 8px 30px;
+}
+
+.logo-icon{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:#fff;
+  color:var(--sidebar);
+  font-size:24px;
+}
+
+.logo strong{
+  font-family:Georgia,serif;
+  font-size:18px;
+}
+
+.logo small{
+  display:block;
+  margin-top:3px;
+  color:#cbd5ce;
+}
+
+.menu-title{
+  margin:23px 10px 8px;
+  color:#98a99e;
+  font-size:10px;
+  letter-spacing:.1em;
+}
+
+.nav-btn{
+  width:100%;
+  margin:2px 0;
+  padding:11px 12px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#dfe7e1;
+  text-align:left;
+}
+
+.nav-btn span{
+  display:inline-block;
+  width:28px;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+  background:var(--sidebar2);
+  color:#fff;
+}
+
+.ai-side{
+  margin-top:32px;
+  padding:16px;
+  border-radius:14px;
+  background:linear-gradient(145deg,#405c4c,#6e856f);
+}
+
+.ai-side strong{
+  display:block;
+  margin-bottom:7px;
+}
+
+.ai-side p{
+  color:#edf3ee;
+  font-size:12px;
+  line-height:1.5;
+}
+
+/* MAIN */
+
+.main{
+  grid-column:2;
+  padding:25px 30px 60px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  margin-bottom:24px;
+}
+
+.welcome h1{
+  margin:0;
+  font-family:Georgia,serif;
+  font-size:25px;
+}
+
+.welcome p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.global-search{
+  width:260px;
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:24px 0 12px;
+}
+
+.section-title h2{
+  margin:0;
+  font-family:Georgia,serif;
+  font-size:21px;
+}
+
+/* ELEMENTS */
+
+.card{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--panel);
+  box-shadow:var(--shadow);
+}
+
+.btn{
+  padding:11px 15px;
+  border:0;
+  border-radius:9px;
+  background:var(--green);
+  color:#fff;
+  font-weight:bold;
+}
+
+.btn:hover{filter:brightness(.95)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.light{background:var(--cream);color:var(--brown)}
+.btn.caramel{background:var(--caramel)}
+.btn.red{background:var(--red)}
+.btn.small{padding:7px 10px;font-size:11px}
+
+input,
+textarea,
+select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  outline:none;
+  background:#fff;
+  color:var(--text);
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+  border-color:#a7b7aa;
+  box-shadow:0 0 0 3px rgba(82,107,89,.08);
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+label{
+  display:block;
+  margin:4px 0 6px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:10px;
+}
+
+/* DASHBOARD */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+
+.stat{
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+
+.stat-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.stat-icon{
+  width:37px;
+  height:37px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  background:var(--green-light);
+  font-size:18px;
+}
+
+.stat strong{
+  display:block;
+  margin:10px 0 4px;
+  font-size:27px;
+}
+
+.stat small{color:var(--muted)}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:15px;
+}
+
+.book-row{
+  display:grid;
+  grid-template-columns:55px 1fr 115px 90px;
+  align-items:center;
+  gap:13px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.book-row:last-child{border-bottom:0}
+
+.cover,
+.library-cover{
+  object-fit:cover;
+  background:var(--cream);
+}
+
+.cover{
+  width:48px;
+  height:68px;
+  border-radius:6px;
+}
+
+.cover-empty{
+  width:48px;
+  height:68px;
+  display:grid;
+  place-items:center;
+  border-radius:6px;
+  background:var(--cream);
+  font-size:23px;
+}
+
+.book-title{
+  margin-bottom:4px;
+  font-weight:bold;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 8px;
+  border-radius:20px;
+  background:var(--green-light);
+  color:#48614f;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.progress{
+  height:6px;
+  margin-top:8px;
+  overflow:hidden;
+  border-radius:20px;
+  background:#eee8e2;
+}
+
+.progress div{
+  height:100%;
+  background:var(--green);
+}
+
+.task{
+  display:flex;
+  gap:10px;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.task:last-child{border:0}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.quick{
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  text-align:left;
+}
+
+.quick:hover{
+  border-color:#b8c6bb;
+  background:#fbfcfa;
+}
+
+.quick .emoji{
+  display:block;
+  margin-bottom:9px;
+  font-size:24px;
+}
+
+/* LIBRARY */
+
+.library-tools{
+  display:grid;
+  grid-template-columns:1fr 210px;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.library-card{
+  display:grid;
+  grid-template-columns:75px 1fr auto;
+  gap:15px;
+  align-items:start;
+  margin-bottom:10px;
+}
+
+.library-cover{
+  width:70px;
+  height:100px;
+  border-radius:7px;
+}
+
+.library-empty-cover{
+  width:70px;
+  height:100px;
+  display:grid;
+  place-items:center;
+  border-radius:7px;
+  background:var(--cream);
+  font-size:30px;
+}
+
+.note{
+  margin:10px 0;
+  line-height:1.5;
+}
+
+/* FORM */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.full{grid-column:1/-1}
+
+.photo-preview{
+  display:none;
+  width:100px;
+  height:145px;
+  margin-top:8px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+/* AI */
+
+.studio-grid{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:15px;
+}
+
+.ai-intro{
+  padding:15px;
+  border-radius:10px;
+  background:#f1f5f1;
+}
+
+.ai-result{
+  margin-top:15px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#fff;
+  white-space:pre-wrap;
+  line-height:1.65;
+}
+
+.success,
+.error,
+.notice{
+  padding:13px;
+  border-radius:8px;
+}
+
+.success{
+  border-left:4px solid var(--green);
+  background:#edf4ee;
+}
+
+.error{
+  border-left:4px solid var(--red);
+  background:#fff0ef;
+}
+
+.notice{
+  border-left:4px solid var(--caramel);
+  background:#fff7e9;
+}
+
+.loader{
+  display:inline-block;
+  width:17px;
+  height:17px;
+  margin-right:7px;
+  vertical-align:middle;
+  border:3px solid #ccd5ce;
+  border-top-color:var(--green);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* CALENDAR */
+
+.calendar-grid{
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:15px;
+}
+
+.calendar-item{
+  margin-bottom:10px;
+  border-left:4px solid var(--caramel);
+}
+
+/* COOP */
+
+.simple-list{
+  display:grid;
+  gap:10px;
+}
+
+.coop-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+
+.empty{
+  padding:35px 20px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.empty .emoji{
+  display:block;
+  margin-bottom:10px;
+  font-size:42px;
+}
+
+.mobile-nav{display:none}
+
+/* MOBILE */
+
+@media(max-width:950px){
+  .layout{display:block}
+  .sidebar{display:none}
+  .main{padding:18px 15px 95px}
+  .stats{grid-template-columns:1fr 1fr}
+  .dashboard-grid,
+  .studio-grid,
+  .calendar-grid{
+    grid-template-columns:1fr;
+  }
+  .topbar{align-items:flex-start}
+  .global-search{display:none}
+  .book-row{grid-template-columns:50px 1fr}
+  .book-row .status-cell,
+  .book-row .rating-cell{
+    grid-column:2;
+  }
+  .mobile-nav{
+    position:fixed;
+    z-index:100;
+    right:0;
+    bottom:0;
+    left:0;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    padding-bottom:env(safe-area-inset-bottom);
+    border-top:1px solid var(--line);
+    background:rgba(255,255,255,.97);
+    backdrop-filter:blur(12px);
+  }
+  .mobile-nav button{
+    padding:9px 2px;
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    font-size:9px;
+  }
+  .mobile-nav button span{
+    display:block;
+    margin-bottom:2px;
+    font-size:20px;
+  }
+}
+
+@media(max-width:650px){
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .library-tools{grid-template-columns:1fr}
+  .library-card{grid-template-columns:60px 1fr}
+  .library-card .library-progress{grid-column:2}
+  .library-cover,
+  .library-empty-cover{
+    width:58px;
+    height:84px;
+  }
+  .quick-grid{grid-template-columns:1fr}
+  .top-actions .btn{padding:10px;font-size:11px}
+}
+
+@media(max-width:430px){
+  .stats{gap:8px}
+  .stat{padding:13px}
+  .stat strong{font-size:23px}
+  .welcome h1{font-size:21px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+  <div class="logo">
+    <div class="logo-icon">📚</div>
+    <div>
+      <strong>Oczytana Karolcia</strong>
+      <small>Bookstagram Studio</small>
+    </div>
+  </div>
+
+  <div class="menu-title">GŁÓWNE</div>
+
+  <button class="nav-btn active" data-page="dashboard" onclick="showPage('dashboard')">
+    <span>🏠</span> Dashboard
+  </button>
+
+  <button class="nav-btn" data-page="library" onclick="showPage('library')">
+    <span>📚</span> Biblioteka
+  </button>
+
+  <button class="nav-btn" data-page="studio" onclick="showPage('studio')">
+    <span>✨</span> Studio Karolci AI
+  </button>
+
+  <button class="nav-btn" data-page="calendar" onclick="showPage('calendar')">
+    <span>📅</span> Kalendarz
+  </button>
+
+  <div class="menu-title">ORGANIZACJA</div>
+
+  <button class="nav-btn" data-page="add" onclick="showPage('add')">
+    <span>➕</span> Dodaj książkę
+  </button>
+
+  <button class="nav-btn" data-page="cooperations" onclick="showPage('cooperations')">
+    <span>🤝</span> Współprace
+  </button>
+
+  <button class="nav-btn" data-page="bookmail" onclick="showPage('bookmail')">
+    <span>📦</span> Bookmaile
+  </button>
+
+  <div class="ai-side">
+    <strong>✨ Karolcia AI</strong>
+    <p>
+      Recenzje, posty, rolki, Stories, karuzele
+      i hashtagi na podstawie Twoich książek.
+    </p>
+    <button class="btn light small" onclick="showPage('studio')">
+      Otwórz Studio
+    </button>
+  </div>
+
+</aside>
+
+
+<main class="main">
+
+<div class="topbar">
+
+  <div class="welcome">
+    <h1>Cześć, Karolcia! 👋</h1>
+    <p>Twoje centrum dowodzenia Bookstagramem.</p>
+  </div>
+
+  <div class="top-actions">
+    <input
+      id="globalSearch"
+      class="global-search"
+      placeholder="🔎 Szukaj książek..."
+      oninput="globalSearch()"
+    >
+    <button class="btn" onclick="showPage('add')">
+      + Nowa książka
+    </button>
+  </div>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-top">
+        <small>Wszystkie książki</small>
+        <div class="stat-icon">📚</div>
+      </div>
+      <strong id="statAll">0</strong>
+      <small>w bibliotece</small>
+    </div>
+
+    <div class="stat">
+      <div class="stat-top">
+        <small>Aktualnie czytam</small>
+        <div class="stat-icon">📖</div>
+      </div>
+      <strong id="statReading">0</strong>
+      <small>rozpoczętych</small>
+    </div>
+
+    <div class="stat">
+      <div class="stat-top">
+        <small>Przeczytane</small>
+        <div class="stat-icon">✅</div>
+      </div>
+      <strong id="statFinished">0</strong>
+      <small>łącznie</small>
+    </div>
+
+    <div class="stat">
+      <div class="stat-top">
+        <small>Do przeczytania</small>
+        <div class="stat-icon">🔖</div>
+      </div>
+      <strong id="statTBR">0</strong>
+      <small>czeka na półce</small>
+    </div>
+
+  </div>
+
+
+  <div class="section-title">
+    <h2>📖 Twoje książki</h2>
+    <button class="btn light small" onclick="showPage('library')">
+      Zobacz wszystkie →
+    </button>
+  </div>
+
+  <div class="dashboard-grid">
+
+    <div class="card">
+      <div id="dashboardBooks"></div>
+    </div>
+
+    <div class="card">
+
+      <div class="section-title" style="margin-top:0">
+        <h2>Plan na dziś</h2>
+      </div>
+
+      <div class="task">
+        <div>☐</div>
+        <div>
+          <strong>Uzupełnij wrażenia</strong>
+          <div class="muted">Zapisz emocje po czytaniu.</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div>☐</div>
+        <div>
+          <strong>Przygotuj publikację</strong>
+          <div class="muted">Skorzystaj ze Studio Karolci AI.</div>
+        </div>
+      </div>
+
+      <div class="task">
+        <div>☐</div>
+        <div>
+          <strong>Zaplanuj post</strong>
+          <div class="muted">Dodaj termin do kalendarza.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="section-title">
+    <h2>Szybkie narzędzia</h2>
+  </div>
+
+  <div class="quick-grid">
+
+    <button class="quick" onclick="openStudioType('Recenzja')">
+      <span class="emoji">📚</span>
+      <strong>Recenzja AI</strong>
+      <div class="muted">Pełna recenzja na Instagram.</div>
+    </button>
+
+    <button class="quick" onclick="openStudioType('Reel')">
+      <span class="emoji">🎬</span>
+      <strong>Reel</strong>
+      <div class="muted">Hook, napisy, lektor i opis.</div>
+    </button>
+
+    <button class="quick" onclick="showPage('calendar')">
+      <span class="emoji">📅</span>
+      <strong>Kalendarz</strong>
+      <div class="muted">Zaplanuj kolejne publikacje.</div>
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- LIBRARY -->
+
+<section id="library" class="page">
+
+  <div class="section-title">
+    <h2>📚 Moja biblioteka</h2>
+    <button class="btn" onclick="showPage('add')">
+      + Dodaj książkę
+    </button>
+  </div>
+
+  <div class="library-tools">
+
+    <input
+      id="search"
+      placeholder="🔎 Szukaj po tytule lub autorze..."
+      oninput="renderLibrary()"
+    >
+
+    <select id="filter" onchange="renderLibrary()">
+      <option value="all">Wszystkie</option>
+      <option value="Czytam">Czytam</option>
+      <option value="Do przeczytania">Do przeczytania</option>
+      <option value="Przeczytana">Przeczytane</option>
+    </select>
+
+  </div>
+
+  <div id="libraryList"></div>
+
+</section>
+
+
+<!-- ADD BOOK -->
+
+<section id="add" class="page">
+
+  <div class="section-title">
+    <h2 id="bookFormTitle">➕ Dodaj książkę</h2>
+  </div>
+
+  <div class="card">
+
+    <input type="hidden" id="editId">
+
+    <div class="form-grid">
+
+      <div class="full">
+        <label>Tytuł *</label>
+        <input id="title" placeholder="Tytuł książki">
+      </div>
+
+      <div>
+        <label>Autor / Autorka</label>
+        <input id="author" placeholder="Imię i nazwisko">
+      </div>
+
+      <div>
+        <label>Wydawnictwo</label>
+        <input id="publisher" placeholder="Nazwa wydawnictwa">
+      </div>
+
+      <div>
+        <label>Gatunek / temat</label>
+        <input id="genre" placeholder="Np. thriller, romans, literatura dziecięca">
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select id="status">
+          <option>Do przeczytania</option>
+          <option>Czytam</option>
+          <option>Przeczytana</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Postęp czytania (%)</label>
+        <input id="progress" type="number" min="0" max="100" value="0">
+      </div>
+
+      <div>
+        <label>Moja ocena /10</label>
+        <select id="rating">
+          <option value="">Jeszcze nie oceniam</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Egzemplarz ze współpracy?</label>
+        <select id="cooperation">
+          <option value="Nie">Nie</option>
+          <option value="Tak">Tak</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label>Zdjęcie / okładka</label>
+        <input id="photo" type="file" accept="image/*" onchange="previewPhoto()">
+        <img id="photoPreview" class="photo-preview" alt="Podgląd okładki">
+      </div>
+
+      <div class="full">
+        <label>Moje wrażenia</label>
+        <textarea
+          id="note"
+          placeholder="Co Ci się podobało? Co wypadło słabiej? Jakie emocje wywołała książka? Co sądzisz o języku, tempie i bohaterach?"
+        ></textarea>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button class="btn" onclick="saveBook()">
+        ✓ Zapisz książkę
+      </button>
+
+      <button
+        id="cancelEditBtn"
+        class="btn light"
+        style="display:none"
+        onclick="clearBookForm();showPage('library')"
+      >
+        Anuluj edycję
+      </button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- STUDIO -->
+
+<section id="studio" class="page">
+
+  <div class="section-title">
+    <h2>✨ Studio Karolci AI</h2>
+  </div>
+
+  <div class="studio-grid">
+
+    <div class="card">
+
+      <label>Wybierz książkę</label>
+      <select id="studioBook"></select>
+
+      <br><br>
+
+      <label>Co przygotować?</label>
+
+      <select id="contentType">
+        <option value="Recenzja">📚 Pełna recenzja</option>
+        <option value="Post">✍️ Post</option>
+        <option value="Reel">🎬 Tekst do rolki</option>
+        <option value="Stories">📱 Stories</option>
+        <option value="Karuzela">🖼️ Karuzela</option>
+        <option value="Hashtagi">🏷️ Hashtagi</option>
+      </select>
+
+      <br><br>
+
+      <button id="generateBtn" class="btn" onclick="generateAI()">
+        ✨ Generuj z AI
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="ai-intro">
+
+        <strong>🤖 Karolcia AI + Gemini</strong>
+
+        <p class="muted" style="line-height:1.55">
+          Studio korzysta z danych zapisanych przy książce.
+          Przy pełnej recenzji najważniejsze są Twoje własne
+          wrażenia — AI nie powinno wymyślać Twojej opinii.
+        </p>
+
+      </div>
+
+      <div id="studioStatus" style="margin-top:12px"></div>
+
+    </div>
+
+  </div>
+
+  <div id="studioResult"></div>
+
+</section>
+
+
+<!-- CALENDAR -->
+
+<section id="calendar" class="page">
+
+  <div class="section-title">
+    <h2>📅 Kalendarz publikacji</h2>
+  </div>
+
+  <div class="calendar-grid">
+
+    <div class="card">
+
+      <label>Co planujesz?</label>
+      <input id="calendarTitle" placeholder="Np. Recenzja — tytuł książki">
+
+      <br><br>
+
+      <label>Data</label>
+      <input id="calendarDate" type="date">
+
+      <br><br>
+
+      <button class="btn caramel" onclick="addCalendar()">
+        + Zaplanuj publikację
+      </button>
+
+    </div>
+
+    <div id="calendarList"></div>
+
+  </div>
+
+</section>
+
+
+<!-- COOPERATIONS -->
+
+<section id="cooperations" class="page">
+
+  <div class="section-title">
+    <h2>🤝 Współprace</h2>
+  </div>
+
+  <div class="card">
+
+    <p class="muted">
+      Tutaj zobaczysz książki oznaczone jako egzemplarze ze współpracy.
+    </p>
+
+    <div id="cooperationList"></div>
+
+  </div>
+
+</section>
+
+
+<!-- BOOKMAIL -->
+
+<section id="bookmail" class="page">
+
+  <div class="section-title">
+    <h2>📦 Bookmaile</h2>
+  </div>
+
+  <div class="card">
+
+    <div class="empty">
+      <span class="emoji">📦</span>
+      <h3>Strefa Bookmaili</h3>
+      <p>
+        Dodawaj otrzymane książki do Biblioteki.
+        Następnie w Studio możesz wybrać „Post”
+        lub „Reel”, aby przygotować materiał o przesyłce.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- MOBILE NAV -->
+
+<nav class="mobile-nav">
+
+  <button onclick="showPage('dashboard')">
+    <span>🏠</span>
+    Dzisiaj
+  </button>
+
+  <button onclick="showPage('library')">
+    <span>📚</span>
+    Biblioteka
+  </button>
+
+  <button onclick="showPage('add')">
+    <span>➕</span>
+    Dodaj
+  </button>
+
+  <button onclick="showPage('studio')">
+    <span>✨</span>
+    Studio
+  </button>
+
+  <button onclick="showPage('calendar')">
+    <span>📅</span>
+    Kalendarz
+  </button>
+
+</nav>
+
+
+<script>
+
+const BOOK_KEY = "karolcia_books_v2";
+const CAL_KEY = "karolcia_calendar_v2";
+
+/* STORAGE */
+
+function getBooks(){
+  try{
+    return JSON.parse(localStorage.getItem(BOOK_KEY)) || [];
+  }catch(e){
+    return [];
+  }
+}
+
+function setBooks(data){
+  localStorage.setItem(BOOK_KEY, JSON.stringify(data));
+}
+
+function getCalendar(){
+  try{
+    return JSON.parse(localStorage.getItem(CAL_KEY)) || [];
+  }catch(e){
+    return [];
+  }
+}
+
+function setCalendar(data){
+  localStorage.setItem(CAL_KEY, JSON.stringify(data));
+}
+
+function esc(value){
+  const div = document.createElement("div");
+  div.textContent = String(value ?? "");
+  return div.innerHTML;
+}
+
+
+/* NAVIGATION */
+
+function showPage(id){
+
+  document.querySelectorAll(".page").forEach(page=>{
+    page.classList.toggle("active", page.id === id);
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.page === id);
+  });
+
+  if(id === "dashboard") renderDashboard();
+  if(id === "library") renderLibrary();
+  if(id === "studio") renderStudio();
+  if(id === "calendar") renderCalendar();
+  if(id === "cooperations") renderCooperations();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+/* DASHBOARD */
+
+function renderDashboard(){
+
+  const books = getBooks();
+
+  document.getElementById("statAll").textContent =
+    books.length;
+
+  document.getElementById("statReading").textContent =
+    books.filter(b=>b.status === "Czytam").length;
+
+  document.getElementById("statFinished").textContent =
+    books.filter(b=>b.status === "Przeczytana").length;
+
+  document.getElementById("statTBR").textContent =
+    books.filter(b=>b.status === "Do przeczytania").length;
+
+  const target = document.getElementById("dashboardBooks");
+
+  if(!books.length){
+
+    target.innerHTML = `
+      <div class="empty">
+        <span class="emoji">📚</span>
+        <h3>Twoja biblioteka czeka</h3>
+        <p>Dodaj pierwszą książkę, aby rozpocząć.</p>
+        <button class="btn" onclick="showPage('add')">
+          + Dodaj książkę
+        </button>
+      </div>
+    `;
+
+    return;
+  }
+
+  const sorted = [...books].sort((a,b)=>{
+    if(a.status === "Czytam" && b.status !== "Czytam") return -1;
+    if(b.status === "Czytam" && a.status !== "Czytam") return 1;
+    return (b.createdAt || "").localeCompare(a.createdAt || "");
+  });
+
+  target.innerHTML = sorted.slice(0,5).map(book=>`
+
+    <div class="book-row">
+
+      ${
+        book.photo
+        ? `<img class="cover" src="${book.photo}" alt="">`
+        : `<div class="cover-empty">📖</div>`
+      }
+
+      <div>
+
+        <div class="book-title">
+          ${esc(book.title)}
+        </div>
+
+        <div class="muted">
+          ${esc(book.author || "Autor nieuzupełniony")}
+        </div>
+
+        <div class="progress">
+          <div style="width:${Number(book.progress) || 0}%"></div>
+        </div>
+
+        <div class="muted" style="margin-top:4px">
+          ${Number(book.progress) || 0}%
+        </div>
+
+      </div>
+
+      <div class="status-cell">
+        <span class="badge">
+          ${esc(book.status)}
+        </span>
+      </div>
+
+      <div class="rating-cell">
+        ${
+          book.rating
+          ? `⭐ ${esc(book.rating)}/10`
+          : `<span class="muted">Bez oceny</span>`
+        }
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+
+/* PHOTO */
+
+function previewPhoto(){
+
+  const file = document.getElementById("photo").files[0];
+  const preview = document.getElementById("photoPreview");
+
+  if(!file){
+    preview.style.display = "none";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = e=>{
+    preview.src = e.target.result;
+    preview.style.display = "block";
   };
 
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({
-        error: "Dozwolone są tylko zapytania POST."
-      })
-    };
+  reader.readAsDataURL(file);
+}
+
+
+/* ADD / EDIT BOOK */
+
+function saveBook(){
+
+  const title = document.getElementById("title").value.trim();
+
+  if(!title){
+    alert("Podaj tytuł książki.");
+    return;
   }
 
-  try {
+  const editId = document.getElementById("editId").value;
+  const books = getBooks();
 
-    const apiKey = process.env.GEMINI_API_KEY;
+  const existing = editId
+    ? books.find(b=>b.id === editId)
+    : null;
 
-    if (!apiKey) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({
-          error: "Brak GEMINI_API_KEY w ustawieniach Netlify."
-        })
-      };
-    }
+  const book = {
+    id: editId || Date.now().toString(),
+    title,
+    author: document.getElementById("author").value.trim(),
+    publisher: document.getElementById("publisher").value.trim(),
+    genre: document.getElementById("genre").value.trim(),
+    status: document.getElementById("status").value,
+    progress: Math.min(
+      100,
+      Math.max(
+        0,
+        Number(document.getElementById("progress").value) || 0
+      )
+    ),
+    rating: document.getElementById("rating").value,
+    cooperation: document.getElementById("cooperation").value,
+    note: document.getElementById("note").value.trim(),
+    photo: existing?.photo || "",
+    createdAt: existing?.createdAt || new Date().toISOString()
+  };
 
-    const data = JSON.parse(event.body || "{}");
+  const file = document.getElementById("photo").files[0];
 
-    const type = data.type || "Post";
-    const book = data.book || {};
+  if(file){
 
-    const prompt = `
-Jesteś Oczytaną Karolcią – asystentką polskiego profilu książkowego na Instagramie.
+    const reader = new FileReader();
 
-Twoim zadaniem jest przygotowywanie naturalnych, angażujących i gotowych do publikacji treści po polsku.
+    reader.onload = e=>{
+      book.photo = e.target.result;
+      finishSaveBook(book, editId);
+    };
 
-WAŻNE ZASADY:
-- nie wymyślaj fabuły;
-- nie wymyślaj bohaterów;
-- nie wymyślaj cytatów;
-- nie wymyślaj wydawnictwa;
-- nie udawaj opinii użytkowniczki;
-- nie zdradzaj zakończenia ani ważnych zwrotów akcji;
-- korzystaj wyłącznie z przekazanych danych;
-- jeśli informacji brakuje, nie uzupełniaj ich fikcyjnymi faktami;
-- pisz naturalnie, jak polska czytelniczka prowadząca Bookstagram;
-- unikaj sztucznego, przesadnie literackiego języka.
+    reader.readAsDataURL(file);
 
-DANE:
+  }else{
 
-Tytuł: ${book.title || "brak danych"}
-Autor/Autorka: ${book.author || "brak danych"}
-Wydawnictwo: ${book.publisher || "brak danych"}
-Gatunek/temat: ${book.genre || "brak danych"}
-Status: ${book.status || "brak danych"}
-Postęp: ${book.progress ?? "brak danych"}%
-Ocena: ${book.rating ? book.rating + "/10" : "brak oceny"}
+    finishSaveBook(book, editId);
+  }
+}
 
-Własne wrażenia użytkowniczki:
-${book.note || "brak własnych wrażeń"}
 
-FORMAT:
-${type}
+function finishSaveBook(book, editId){
 
-Jeśli FORMAT to Recenzja:
+  let books = getBooks();
 
-Rozpocznij dokładnie:
+  if(editId){
 
-📚❤️ RECENZJA
+    books = books.map(b=>
+      b.id === editId ? book : b
+    );
 
-📖 Tytuł: ${book.title || "brak danych"}
-✍️ Autor/Autorka: ${book.author || "brak danych"}
-🏢 Wydawnictwo: ${book.publisher || "brak danych"}
-📚 Temat/gatunek: ${book.genre || "brak danych"}
-⭐ Moja ocena: ${book.rating ? book.rating + "/10" : "brak oceny"}
+  }else{
 
-Następnie:
-- przygotuj około 1800–2200 znaków ze spacjami;
-- zacznij mocnym, naturalnym zdaniem;
-- oprzyj opinię przede wszystkim na własnych wrażeniach użytkowniczki;
-- opisz emocje, klimat, tempo, język lub bohaterów tylko wtedy, gdy wynikają z podanych wrażeń;
-- wskaż zalety;
-- uwzględnij wyważoną krytykę, jeżeli wynika z opinii użytkowniczki;
-- napisz, komu można polecić tę publikację;
-- zakończ jednym naturalnym pytaniem;
-- dodaj dokładnie 5 trafnych hashtagów.
+    books.unshift(book);
+  }
 
-Jeżeli użytkowniczka nie podała własnych wrażeń, NIE twórz fikcyjnej recenzji. Przygotuj zamiast niej zapowiedź lektury.
+  try{
 
-Jeśli FORMAT to Post:
-- przygotuj naturalny post na Instagram;
-- zakończ jednym pytaniem;
-- dodaj dokładnie 5 hashtagów.
+    setBooks(books);
 
-Jeśli FORMAT to Reel:
-przygotuj:
-- mocny hook na pierwsze 2–3 sekundy;
-- krótkie napisy rozpisane czasowo;
-- tekst lektorski;
-- opis pod film;
-- CTA;
-- dokładnie 5 hashtagów.
+  }catch(e){
 
-Jeśli FORMAT to Stories:
-- przygotuj krótką serię Stories;
-- wszystkie ujęcia muszą być możliwe bez pokazywania twarzy;
-- można wykorzystać książkę, dłonie, strony, filiżankę, dekoracje i napisy.
+    alert(
+      "Nie udało się zapisać zdjęcia. Spróbuj użyć mniejszego zdjęcia albo zapisać książkę bez okładki."
+    );
 
-Jeśli FORMAT to Karuzela:
-przygotuj 6 slajdów:
-1. Hook.
-2. O czym jest publikacja — wyłącznie jeśli wynika to z przekazanych danych.
-3. Największa zaleta.
-4. Element, który może nie spodobać się każdemu.
-5. Dla kogo.
-6. Ocena i jedno pytanie.
+    return;
+  }
 
-Jeśli FORMAT to Hashtagi:
-- zwróć dokładnie 5 hashtagów;
-- dopasuj je do gatunku, tematu, Bookstagrama i czytelnictwa.
+  clearBookForm();
 
-Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
-`;
+  renderDashboard();
+  renderLibrary();
+  renderStudio();
+  renderCooperations();
 
-    const model = "gemini-2.5-flash";
+  showPage("library");
+}
 
-    const url =
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-    const response = await fetch(url, {
-      method: "POST",
+function clearBookForm(){
 
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey
-      },
+  document.getElementById("editId").value = "";
 
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [
-              {
-                text: prompt
-              }
-            ]
-          }
-        ],
+  [
+    "title",
+    "author",
+    "publisher",
+    "genre",
+    "note"
+  ].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
 
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 3000
-        }
-      })
-    });
+  document.getElementById("status").value =
+    "Do przeczytania";
 
-    const result = await response.json();
+  document.getElementById("progress").value = 0;
+  document.getElementById("rating").value = "";
+  document.getElementById("cooperation").value = "Nie";
+  document.getElementById("photo").value = "";
 
-    if (!response.ok) {
+  document.getElementById("photoPreview").style.display =
+    "none";
 
-      console.error("Gemini API error:", result);
+  document.getElementById("bookFormTitle").textContent =
+    "➕ Dodaj książkę";
 
-      return {
-        statusCode: response.status,
-        headers,
-        body: JSON.stringify({
-          error:
-            result?.error?.message ||
-            "Gemini API zwróciło błąd."
-        })
-      };
-    }
+  document.getElementById("cancelEditBtn").style.display =
+    "none";
+}
+
+
+function editBook(id){
+
+  const book = getBooks().find(b=>b.id === id);
+
+  if(!book) return;
+
+  showPage("add");
+
+  document.getElementById("editId").value = book.id;
+  document.getElementById("title").value = book.title || "";
+  document.getElementById("author").value = book.author || "";
+  document.getElementById("publisher").value = book.publisher || "";
+  document.getElementById("genre").value = book.genre || "";
+  document.getElementById("status").value = book.status || "Do przeczytania";
+  document.getElementById("progress").value = book.progress || 0;
+  document.getElementById("rating").value = book.rating || "";
+  document.getElementById("cooperation").value = book.cooperation || "Nie";
+  document.getElementById("note").value = book.note || "";
+
+  document.getElementById("bookFormTitle").textContent =
+    "✏️ Edytuj książkę";
+
+  document.getElementById("cancelEditBtn").style.display =
+    "inline-block";
+
+  const preview = document.getElementById("photoPreview");
+
+  if(book.photo){
+    preview.src = book.photo;
+    preview.style.display = "block";
+  }else{
+    preview.style.display = "none";
+  }
+}
+
+
+function deleteBook(id){
+
+  if(!confirm("Czy na pewno usunąć tę książkę?")){
+    return;
+  }
+
+  setBooks(
+    getBooks().filter(book=>book.id !== id)
+  );
+
+  renderDashboard();
+  renderLibrary();
+  renderStudio();
+  renderCooperations();
+}
+
+
+/* LIBRARY */
+
+function renderLibrary(){
+
+  const target = document.getElementById("libraryList");
+
+  const search =
+    (document.getElementById("search").value || "")
+    .toLowerCase();
+
+  const filter =
+    document.getElementById("filter").value;
+
+  const books = getBooks().filter(book=>{
 
     const text =
-      result?.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("")
-        .trim();
+      `${book.title} ${book.author} ${book.publisher} ${book.genre}`
+      .toLowerCase();
 
-    if (!text) {
+    const searchMatch =
+      text.includes(search);
 
-      console.error("Brak tekstu Gemini:", result);
+    const filterMatch =
+      filter === "all" ||
+      book.status === filter;
 
-      return {
-        statusCode: 502,
-        headers,
-        body: JSON.stringify({
-          error: "Gemini nie zwróciło tekstu."
+    return searchMatch && filterMatch;
+  });
+
+  if(!books.length){
+
+    target.innerHTML = `
+      <div class="card empty">
+        <span class="emoji">📚</span>
+        <h3>Brak książek</h3>
+        <p>Dodaj nowy tytuł albo zmień wyszukiwanie.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  target.innerHTML = books.map(book=>`
+
+    <div class="card library-card">
+
+      ${
+        book.photo
+        ? `<img class="library-cover" src="${book.photo}" alt="">`
+        : `<div class="library-empty-cover">📖</div>`
+      }
+
+      <div>
+
+        <div class="book-title">
+          ${esc(book.title)}
+        </div>
+
+        <div class="muted">
+          ${esc(book.author || "Autor nieuzupełniony")}
+        </div>
+
+        ${
+          book.publisher
+          ? `<div class="muted" style="margin-top:3px">
+              🏢 ${esc(book.publisher)}
+             </div>`
+          : ""
+        }
+
+        <div style="margin-top:8px">
+
+          <span class="badge">
+            ${esc(book.status)}
+          </span>
+
+          ${
+            book.rating
+            ? ` &nbsp; ⭐ ${esc(book.rating)}/10`
+            : ""
+          }
+
+          ${
+            book.cooperation === "Tak"
+            ? ` &nbsp; <span class="badge">🤝 Współpraca</span>`
+            : ""
+          }
+
+        </div>
+
+        ${
+          book.note
+          ? `<div class="note">${esc(book.note)}</div>`
+          : `<p class="muted">Brak zapisanych wrażeń.</p>`
+        }
+
+        <div class="progress">
+          <div style="width:${Number(book.progress) || 0}%"></div>
+        </div>
+
+        <div class="muted" style="margin-top:4px">
+          Postęp: ${Number(book.progress) || 0}%
+        </div>
+
+        <div class="actions">
+
+          <button class="btn small" onclick="openStudio('${book.id}')">
+            ✨ Stwórz treść
+          </button>
+
+          <button class="btn light small" onclick="editBook('${book.id}')">
+            ✏️ Edytuj
+          </button>
+
+          <button class="btn red small" onclick="deleteBook('${book.id}')">
+            Usuń
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="library-progress">
+        ${
+          book.genre
+          ? `<span class="muted">${esc(book.genre)}</span>`
+          : ""
+        }
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+
+/* GLOBAL SEARCH */
+
+function globalSearch(){
+
+  const value =
+    document.getElementById("globalSearch").value.trim();
+
+  if(value.length < 2) return;
+
+  showPage("library");
+
+  document.getElementById("search").value = value;
+
+  renderLibrary();
+}
+
+
+/* STUDIO */
+
+function renderStudio(){
+
+  const select = document.getElementById("studioBook");
+  const books = getBooks();
+
+  const current = select.value;
+
+  if(!books.length){
+
+    select.innerHTML =
+      `<option value="">Najpierw dodaj książkę</option>`;
+
+    return;
+  }
+
+  select.innerHTML = books.map(book=>`
+    <option value="${book.id}">
+      ${esc(book.title)}
+    </option>
+  `).join("");
+
+  if(books.some(book=>book.id === current)){
+    select.value = current;
+  }
+}
+
+
+function openStudio(id){
+
+  showPage("studio");
+
+  setTimeout(()=>{
+    document.getElementById("studioBook").value = id;
+  },50);
+}
+
+
+function openStudioType(type){
+
+  showPage("studio");
+
+  setTimeout(()=>{
+    document.getElementById("contentType").value = type;
+  },50);
+}
+
+
+function currentStudioBook(){
+
+  const id =
+    document.getElementById("studioBook").value;
+
+  return getBooks().find(book=>book.id === id);
+}
+
+
+/* GEMINI AI THROUGH NETLIFY */
+
+async function generateAI(){
+
+  const book = currentStudioBook();
+
+  const type =
+    document.getElementById("contentType").value;
+
+  const result =
+    document.getElementById("studioResult");
+
+  const status =
+    document.getElementById("studioStatus");
+
+  const button =
+    document.getElementById("generateBtn");
+
+  if(!book){
+
+    result.innerHTML = `
+      <div class="notice">
+        Najpierw dodaj książkę do Biblioteki.
+      </div>
+    `;
+
+    return;
+  }
+
+  if(type === "Recenzja" && !book.note){
+
+    result.innerHTML = `
+      <div class="notice">
+        <strong>📚 Potrzebuję Twoich wrażeń.</strong>
+        <br><br>
+        Nie chcę wymyślać Twojej opinii o
+        „${esc(book.title)}”.
+        <br><br>
+        Wejdź do Biblioteki → Edytuj i uzupełnij
+        pole „Moje wrażenia”. Możesz też wybrać
+        format „Post”, jeśli książka nie została
+        jeszcze przeczytana.
+      </div>
+    `;
+
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Karolcia pisze…";
+
+  status.innerHTML = `
+    <div class="success">
+      <span class="loader"></span>
+      <strong>Karolcia AI przygotowuje treść…</strong>
+    </div>
+  `;
+
+  result.innerHTML = "";
+
+  try{
+
+    const response = await fetch(
+      "/.netlify/functions/karolcia-ai",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          type:type,
+          book:book
         })
-      };
+      }
+    );
+
+    let data;
+
+    try{
+      data = await response.json();
+    }catch(e){
+      throw new Error(
+        "Funkcja Netlify nie zwróciła prawidłowej odpowiedzi."
+      );
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({
-        text: text
-      })
-    };
+    if(!response.ok){
 
-  } catch (error) {
+      throw new Error(
+        data?.error ||
+        `Błąd serwera (${response.status}).`
+      );
+    }
 
-    console.error("Karolcia AI error:", error);
+    if(!data?.text){
 
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        error:
-          "Wystąpił błąd podczas działania Karolci AI."
-      })
-    };
+      throw new Error(
+        "Gemini nie zwróciło wygenerowanego tekstu."
+      );
+    }
+
+    status.innerHTML = `
+      <div class="success">
+        <strong>✨ Gotowe!</strong>
+        Karolcia AI przygotowała materiał.
+      </div>
+    `;
+
+    result.innerHTML = `
+      <div class="card" style="margin-top:15px">
+
+        <div
+          id="generatedText"
+          class="ai-result"
+        >${esc(data.text)}</div>
+
+        <div class="actions">
+
+          <button class="btn" onclick="copyGenerated()">
+            📋 Kopiuj tekst
+          </button>
+
+          <button class="btn caramel" onclick="generateAI()">
+            🔄 Wygeneruj ponownie
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }catch(error){
+
+    console.error(error);
+
+    status.innerHTML = "";
+
+    result.innerHTML = `
+      <div class="error" style="margin-top:15px">
+
+        <strong>
+          Nie udało się wygenerować treści.
+        </strong>
+
+        <br><br>
+
+        ${esc(error.message)}
+
+      </div>
+    `;
+
+  }finally{
+
+    button.disabled = false;
+    button.textContent = "✨ Generuj z AI";
   }
-};
+}
+
+
+async function copyGenerated(){
+
+  const element =
+    document.getElementById("generatedText");
+
+  if(!element) return;
+
+  const text = element.innerText;
+
+  try{
+
+    await navigator.clipboard.writeText(text);
+
+    alert("Tekst został skopiowany 🤎");
+
+  }catch(e){
+
+    const textarea =
+      document.createElement("textarea");
+
+    textarea.value = text;
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
+    document.execCommand("copy");
+
+    textarea.remove();
+
+    alert("Tekst został skopiowany 🤎");
+  }
+}
+
+
+/* CALENDAR */
+
+function addCalendar(){
+
+  const title =
+    document.getElementById("calendarTitle")
+    .value
+    .trim();
+
+  const date =
+    document.getElementById("calendarDate")
+    .value;
+
+  if(!title || !date){
+
+    alert(
+      "Wpisz nazwę publikacji i wybierz datę."
+    );
+
+    return;
+  }
+
+  const items = getCalendar();
+
+  items.push({
+    id:Date.now().toString(),
+    title,
+    date
+  });
+
+  setCalendar(items);
+
+  document.getElementById("calendarTitle").value = "";
+  document.getElementById("calendarDate").value = "";
+
+  renderCalendar();
+}
+
+
+function renderCalendar(){
+
+  const target =
+    document.getElementById("calendarList");
+
+  const items =
+    getCalendar()
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(!items.length){
+
+    target.innerHTML = `
+      <div class="card empty">
+        <span class="emoji">🗓️</span>
+        <h3>Brak zaplanowanych publikacji</h3>
+        <p>Dodaj pierwszy termin.</p>
+      </div>
+    `;
+
+    return;
+  }
+
+  target.innerHTML = items.map(item=>`
+
+    <div class="card calendar-item">
+
+      <div class="muted">
+        📅 ${esc(formatDate(item.date))}
+      </div>
+
+      <h3>
+        ${esc(item.title)}
+      </h3>
+
+      <button
+        class="btn red small"
+        onclick="deleteCalendar('${item.id}')"
+      >
+        Usuń
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+
+function deleteCalendar(id){
+
+  setCalendar(
+    getCalendar().filter(item=>item.id !== id)
+  );
+
+  renderCalendar();
+}
+
+
+function formatDate(value){
+
+  if(!value) return "";
+
+  const parts = value.split("-");
+
+  if(parts.length !== 3) return value;
+
+  return `${parts[2]}.${parts[1]}.${parts[0]}`;
+}
+
+
+/* COOPERATIONS */
+
+function renderCooperations(){
+
+  const target =
+    document.getElementById("cooperationList");
+
+  const books =
+    getBooks().filter(book=>book.cooperation === "Tak");
+
+  if(!books.length){
+
+    target.innerHTML = `
+      <div class="empty">
+        <span class="emoji">🤝</span>
+        <h3>Brak zapisanych współprac</h3>
+        <p>
+          Przy dodawaniu lub edycji książki
+          zaznacz „Egzemplarz ze współpracy? — Tak”.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  target.innerHTML = `
+    <div class="simple-list">
+      ${books.map(book=>`
+        <div class="card coop-item">
+
+          <div>
+            <strong>${esc(book.title)}</strong>
+            <div class="muted">
+              ${esc(book.publisher || book.author || "")}
+            </div>
+          </div>
+
+          <button
+            class="btn small"
+            onclick="openStudio('${book.id}')"
+          >
+            ✨ Stwórz treść
+          </button>
+
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+
+/* START */
+
+renderDashboard();
+renderLibrary();
+renderStudio();
+renderCalendar();
+renderCooperations();
+
+</script>
+
+</body>
+</html>
