@@ -1,7 +1,4 @@
-<!doctype html>
-<html lang="pl">
-<head>
-
+exports.handler = async function (event) {
   const headers = {
     "Content-Type": "application/json; charset=utf-8"
   };
@@ -17,7 +14,6 @@
   }
 
   try {
-
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -31,7 +27,6 @@
     }
 
     const data = JSON.parse(event.body || "{}");
-
     const type = data.type || "Post";
     const book = data.book || {};
 
@@ -50,10 +45,9 @@ WAŻNE ZASADY:
 - korzystaj wyłącznie z przekazanych danych;
 - jeśli informacji brakuje, nie uzupełniaj ich fikcyjnymi faktami;
 - pisz naturalnie, jak polska czytelniczka prowadząca Bookstagram;
-- unikaj sztucznego, przesadnie literackiego języka.
+- unikaj sztucznego i przesadnie literackiego języka.
 
 DANE:
-
 Tytuł: ${book.title || "brak danych"}
 Autor/Autorka: ${book.author || "brak danych"}
 Wydawnictwo: ${book.publisher || "brak danych"}
@@ -61,15 +55,11 @@ Gatunek/temat: ${book.genre || "brak danych"}
 Status: ${book.status || "brak danych"}
 Postęp: ${book.progress ?? "brak danych"}%
 Ocena: ${book.rating ? book.rating + "/10" : "brak oceny"}
+Własne wrażenia użytkowniczki: ${book.note || "brak własnych wrażeń"}
 
-Własne wrażenia użytkowniczki:
-${book.note || "brak własnych wrażeń"}
-
-FORMAT:
-${type}
+FORMAT: ${type}
 
 Jeśli FORMAT to Recenzja:
-
 Rozpocznij dokładnie:
 
 📚❤️ RECENZJA
@@ -84,14 +74,15 @@ Następnie:
 - przygotuj około 1800–2200 znaków ze spacjami;
 - zacznij mocnym, naturalnym zdaniem;
 - oprzyj opinię przede wszystkim na własnych wrażeniach użytkowniczki;
-- opisz emocje, klimat, tempo, język lub bohaterów tylko wtedy, gdy wynikają z podanych wrażeń;
+- opisuj emocje, klimat, tempo, język lub bohaterów tylko wtedy, gdy wynikają z podanych danych;
 - wskaż zalety;
 - uwzględnij wyważoną krytykę, jeżeli wynika z opinii użytkowniczki;
-- napisz, komu można polecić tę publikację;
+- napisz, komu można polecić publikację;
 - zakończ jednym naturalnym pytaniem;
 - dodaj dokładnie 5 trafnych hashtagów.
 
-Jeżeli użytkowniczka nie podała własnych wrażeń, NIE twórz fikcyjnej recenzji. Przygotuj zamiast niej zapowiedź lektury.
+Jeżeli użytkowniczka nie podała własnych wrażeń, NIE twórz fikcyjnej recenzji.
+Przygotuj zamiast niej zapowiedź lektury.
 
 Jeśli FORMAT to Post:
 - przygotuj naturalny post na Instagram;
@@ -99,8 +90,7 @@ Jeśli FORMAT to Post:
 - dodaj dokładnie 5 hashtagów.
 
 Jeśli FORMAT to Reel:
-przygotuj:
-- mocny hook na pierwsze 2–3 sekundy;
+- przygotuj mocny hook na pierwsze 2–3 sekundy;
 - krótkie napisy rozpisane czasowo;
 - tekst lektorski;
 - opis pod film;
@@ -135,12 +125,10 @@ Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
 
     const response = await fetch(url, {
       method: "POST",
-
       headers: {
         "Content-Type": "application/json",
         "x-goog-api-key": apiKey
       },
-
       body: JSON.stringify({
         contents: [
           {
@@ -152,7 +140,6 @@ Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
             ]
           }
         ],
-
         generationConfig: {
           temperature: 0.8,
           maxOutputTokens: 3000
@@ -163,7 +150,6 @@ Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
     const result = await response.json();
 
     if (!response.ok) {
-
       console.error("Gemini API error:", result);
 
       return {
@@ -177,14 +163,12 @@ Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
       };
     }
 
-    const text =
-      result?.candidates?.[0]?.content?.parts
-        ?.map(part => part.text || "")
-        .join("")
-        .trim();
+    const text = result?.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text || "")
+      .join("")
+      .trim();
 
     if (!text) {
-
       console.error("Brak tekstu Gemini:", result);
 
       return {
@@ -205,15 +189,13 @@ Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
     };
 
   } catch (error) {
-
     console.error("Karolcia AI error:", error);
 
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
-        error:
-          "Wystąpił błąd podczas działania Karolci AI."
+        error: "Wystąpił błąd podczas działania Karolci AI."
       })
     };
   }
