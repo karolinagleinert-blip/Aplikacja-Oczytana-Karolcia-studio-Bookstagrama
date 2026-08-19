@@ -1,9 +1,13 @@
 exports.handler = async function (event) {
 
+  const headers = {
+    "Content-Type": "application/json; charset=utf-8"
+  };
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         error: "Dozwolone są tylko zapytania POST."
       })
@@ -12,14 +16,14 @@ exports.handler = async function (event) {
 
   try {
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return {
         statusCode: 500,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
-          error: "Brak OPENAI_API_KEY w Netlify."
+          error: "Brak GEMINI_API_KEY w ustawieniach Netlify."
         })
       };
     }
@@ -30,21 +34,23 @@ exports.handler = async function (event) {
     const book = data.book || {};
 
     const prompt = `
-Jesteś Oczytaną Karolcią – asystentką polskiego profilu książkowego.
+Jesteś Oczytaną Karolcią – asystentką polskiego profilu książkowego na Instagramie.
 
-Tworzysz naturalne, gotowe do publikacji treści na Instagram.
+Twoim zadaniem jest przygotowywanie naturalnych, angażujących i gotowych do publikacji treści po polsku.
 
-NIE WOLNO:
-- wymyślać informacji o fabule,
-- wymyślać bohaterów,
-- wymyślać cytatów,
-- wymyślać wydawnictwa,
-- udawać opinii użytkowniczki,
-- zdradzać zakończenia.
+WAŻNE ZASADY:
+- nie wymyślaj fabuły;
+- nie wymyślaj bohaterów;
+- nie wymyślaj cytatów;
+- nie wymyślaj wydawnictwa;
+- nie udawaj opinii użytkowniczki;
+- nie zdradzaj zakończenia ani ważnych zwrotów akcji;
+- korzystaj wyłącznie z przekazanych danych;
+- jeśli informacji brakuje, nie uzupełniaj ich fikcyjnymi faktami;
+- pisz naturalnie, jak polska czytelniczka prowadząca Bookstagram;
+- unikaj sztucznego, przesadnie literackiego języka.
 
-Jeżeli brakuje informacji, zaznacz ich brak.
-
-DANE KSIĄŻKI:
+DANE:
 
 Tytuł: ${book.title || "brak danych"}
 Autor/Autorka: ${book.author || "brak danych"}
@@ -52,139 +58,145 @@ Wydawnictwo: ${book.publisher || "brak danych"}
 Gatunek/temat: ${book.genre || "brak danych"}
 Status: ${book.status || "brak danych"}
 Postęp: ${book.progress ?? "brak danych"}%
-Ocena: ${book.rating || "brak oceny"}
-Wrażenia użytkowniczki: ${book.note || "brak własnych wrażeń"}
+Ocena: ${book.rating ? book.rating + "/10" : "brak oceny"}
 
-FORMAT DO PRZYGOTOWANIA:
+Własne wrażenia użytkowniczki:
+${book.note || "brak własnych wrażeń"}
+
+FORMAT:
 ${type}
 
-ZASADY:
+Jeśli FORMAT to Recenzja:
 
-Jeśli format to "Recenzja":
-- pełną recenzję twórz tylko wtedy, gdy są własne wrażenia użytkowniczki;
-- zacznij dokładnie od:
+Rozpocznij dokładnie:
 
 📚❤️ RECENZJA
 
-📖 Tytuł:
-✍️ Autor/Autorka:
-🏢 Wydawnictwo:
-📚 Temat/gatunek:
-⭐ Moja ocena: X/10
+📖 Tytuł: ${book.title || "brak danych"}
+✍️ Autor/Autorka: ${book.author || "brak danych"}
+🏢 Wydawnictwo: ${book.publisher || "brak danych"}
+📚 Temat/gatunek: ${book.genre || "brak danych"}
+⭐ Moja ocena: ${book.rating ? book.rating + "/10" : "brak oceny"}
 
-- tekst powinien mieć około 1800–2200 znaków ze spacjami;
-- rozpocznij mocnym zdaniem;
-- pisz naturalnie, emocjonalnie i osobiście;
-- nie wymyślaj faktów;
-- nie dodawaj spoilerów;
-- dodaj wyważoną krytykę;
-- wskaż, komu można polecić książkę;
+Następnie:
+- przygotuj około 1800–2200 znaków ze spacjami;
+- zacznij mocnym, naturalnym zdaniem;
+- oprzyj opinię przede wszystkim na własnych wrażeniach użytkowniczki;
+- opisz emocje, klimat, tempo, język lub bohaterów tylko wtedy, gdy wynikają z podanych wrażeń;
+- wskaż zalety;
+- uwzględnij wyważoną krytykę, jeżeli wynika z opinii użytkowniczki;
+- napisz, komu można polecić tę publikację;
+- zakończ jednym naturalnym pytaniem;
+- dodaj dokładnie 5 trafnych hashtagów.
+
+Jeżeli użytkowniczka nie podała własnych wrażeń, NIE twórz fikcyjnej recenzji. Przygotuj zamiast niej zapowiedź lektury.
+
+Jeśli FORMAT to Post:
+- przygotuj naturalny post na Instagram;
 - zakończ jednym pytaniem;
 - dodaj dokładnie 5 hashtagów.
 
-Jeżeli nie ma własnych wrażeń, zamiast udawać przeczytaną recenzję
-przygotuj zapowiedź lub post przed czytaniem i wyraźnie to zaznacz.
-
-Jeśli format to "Post":
-przygotuj naturalny post na Instagram i dokładnie 5 hashtagów.
-
-Jeśli format to "Reel":
+Jeśli FORMAT to Reel:
 przygotuj:
-- hook na pierwsze 2–3 sekundy,
-- napisy czasowe,
-- tekst lektorski,
-- opis,
-- CTA,
+- mocny hook na pierwsze 2–3 sekundy;
+- krótkie napisy rozpisane czasowo;
+- tekst lektorski;
+- opis pod film;
+- CTA;
 - dokładnie 5 hashtagów.
 
-Jeśli format to "Stories":
-przygotuj krótką serię Stories możliwą do nagrania bez pokazywania twarzy.
+Jeśli FORMAT to Stories:
+- przygotuj krótką serię Stories;
+- wszystkie ujęcia muszą być możliwe bez pokazywania twarzy;
+- można wykorzystać książkę, dłonie, strony, filiżankę, dekoracje i napisy.
 
-Jeśli format to "Karuzela":
+Jeśli FORMAT to Karuzela:
 przygotuj 6 slajdów:
-1. Hook
-2. O czym jest książka — tylko na podstawie dostępnych danych
-3. Największa zaleta wynikająca z opinii użytkowniczki
-4. Element, który może nie spodobać się każdemu
-5. Dla kogo
-6. Ocena i jedno pytanie
+1. Hook.
+2. O czym jest publikacja — wyłącznie jeśli wynika to z przekazanych danych.
+3. Największa zaleta.
+4. Element, który może nie spodobać się każdemu.
+5. Dla kogo.
+6. Ocena i jedno pytanie.
 
-Jeśli format to "Hashtagi":
-zwróć dokładnie 5 trafnych hashtagów.
+Jeśli FORMAT to Hashtagi:
+- zwróć dokładnie 5 hashtagów;
+- dopasuj je do gatunku, tematu, Bookstagrama i czytelnictwa.
 
-Pisz po polsku.
-Zwróć wyłącznie gotową treść dla użytkowniczki.
+Zwróć tylko gotową treść przeznaczoną dla użytkowniczki.
 `;
 
-    const response = await fetch(
-      "https://api.openai.com/v1/responses",
-      {
-        method: "POST",
+    const model = "gemini-2.5-flash";
 
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
+    const url =
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
-        body: JSON.stringify({
-          model: "gpt-5.6-luna",
-          input: prompt
-        })
-      }
-    );
+    const response = await fetch(url, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey
+      },
+
+      body: JSON.stringify({
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          }
+        ],
+
+        generationConfig: {
+          temperature: 0.8,
+          maxOutputTokens: 3000
+        }
+      })
+    });
 
     const result = await response.json();
 
     if (!response.ok) {
 
-      console.error("OpenAI error:", result);
+      console.error("Gemini API error:", result);
 
       return {
         statusCode: response.status,
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           error:
             result?.error?.message ||
-            "OpenAI zwróciło błąd."
+            "Gemini API zwróciło błąd."
         })
       };
     }
 
-    let text = "";
-
-    if (result.output_text) {
-      text = result.output_text;
-    }
-
-    if (!text && Array.isArray(result.output)) {
-
-      for (const item of result.output) {
-
-        if (!Array.isArray(item.content)) continue;
-
-        for (const content of item.content) {
-
-          if (
-            content.type === "output_text" &&
-            content.text
-          ) {
-            text += content.text;
-          }
-        }
-      }
-    }
+    const text =
+      result?.candidates?.[0]?.content?.parts
+        ?.map(part => part.text || "")
+        .join("")
+        .trim();
 
     if (!text) {
-      text = "AI nie zwróciło tekstu. Spróbuj ponownie.";
+
+      console.error("Brak tekstu Gemini:", result);
+
+      return {
+        statusCode: 502,
+        headers,
+        body: JSON.stringify({
+          error: "Gemini nie zwróciło tekstu."
+        })
+      };
     }
 
     return {
       statusCode: 200,
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
+      headers,
       body: JSON.stringify({
         text: text
       })
@@ -192,17 +204,14 @@ Zwróć wyłącznie gotową treść dla użytkowniczki.
 
   } catch (error) {
 
-    console.error(error);
+    console.error("Karolcia AI error:", error);
 
     return {
       statusCode: 500,
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
+      headers,
       body: JSON.stringify({
-        error: "Błąd funkcji Karolcia AI."
+        error:
+          "Wystąpił błąd podczas działania Karolci AI."
       })
     };
   }
